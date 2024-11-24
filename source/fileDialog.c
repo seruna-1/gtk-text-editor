@@ -1,54 +1,45 @@
-#include "textView.h"
-#include <gtk/gtk.h>
+void
+setActiveFile
+( GtkWidget *window, GFile *file )
+{
+	EDITED = FALSE;
 
-char *OPEN_FILE_PATH = "";
+	gtk_window_set_title( ( GtkWindow* ) window , g_file_get_basename( file ) );
 
-void setActiveFile(GtkWidget *window, GFile *file) {
-    EDITED = FALSE;
-    gtk_window_set_title(GTK_WINDOW(window), g_file_get_basename(file));
+	OPEN_FILE_PATH = g_file_get_path( file );
 
-    OPEN_FILE_PATH = g_file_get_path(file);
-    
-    // TODO: Find out why this line causes 'g_object_unref: assertion 'G_IS_OBJECT (object)' failed'
-    // when the file comes from the terminal.
-    g_object_unref(file);
+	g_object_unref(file);
+
+	return;
 }
 
-static void onFileChooserResponse(GtkNativeDialog *fileChooser, int response,
-                                  GtkWidget *window) {
-    GtkFileChooserAction action =
-        gtk_file_chooser_get_action(GTK_FILE_CHOOSER(fileChooser));
+void
+gte_openFileDialog_callback
+( GObject* source_object, GAsyncResult* res, gpointer data )
+{
+	GtkFileDialog* dialog = GTK_FILE_DIALOG( source_object );
 
-    if (response == GTK_RESPONSE_ACCEPT) {
-        GFile *file = gtk_file_chooser_get_file(GTK_FILE_CHOOSER(fileChooser));
+	GFile* file = gtk_file_dialog_open_finish( dialog, res, NULL );
 
-        if (action == GTK_FILE_CHOOSER_ACTION_SAVE) {
-            textBufferToFile(file);
-        } else if (action == GTK_FILE_CHOOSER_ACTION_OPEN) {
-            fileToTextBuffer(file);
-        }
+	fileToTextBuffer(file);
 
-        setActiveFile(window, file);
-    }
+	setActiveFile( topWindow, file );
 
-    g_object_unref(fileChooser);
+	return;
 }
 
-GtkFileChooserNative *newFileChooser(GtkWidget *window,
-                                     GtkFileChooserAction action) {
-    char *actionName = action == GTK_FILE_CHOOSER_ACTION_SAVE ? "Save" : "Open";
-    char title[10];
-    sprintf(title, "%s File", actionName);
+void
+gte_saveFileDialog_callback
+( GObject* source_object, GAsyncResult* res, gpointer data )
+{
+	GtkFileDialog* dialog = source_object;
 
-    GtkFileChooserNative *fileChooser = gtk_file_chooser_native_new(
-        title, GTK_WINDOW(window), action, actionName, "Cancel");
+	GFile* file = gtk_file_dialog_save_finish( dialog, res, NULL );
 
-    GtkFileFilter *fileFilter = gtk_file_filter_new();
-    gtk_file_filter_add_mime_type(fileFilter, "text/*");
-    gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(fileChooser), fileFilter);
+	textBufferToFile(file);
 
-    g_signal_connect(fileChooser, "response", G_CALLBACK(onFileChooserResponse),
-                     window);
+	setActiveFile( topWindow, file );
 
-    return fileChooser;
+	return;
 }
+

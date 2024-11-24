@@ -1,6 +1,4 @@
-#include <gtk/gtk.h>
-
-extern bool EDITED;
+bool EDITED = FALSE;
 
 void buildTextView(GtkWidget *window);
 

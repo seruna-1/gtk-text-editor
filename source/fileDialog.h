@@ -1,8 +1,13 @@
-#include <gtk/gtk.h>
+char* OPEN_FILE_PATH = "";
 
-extern char *OPEN_FILE_PATH;
+GtkFileDialog* fileDialog;
 
-void setActiveFile(GtkWidget *window, GFile *file);
+enum fileDialogMode { open, save };
 
-GtkFileChooserNative *newFileChooser(GtkWidget *window,
-                                     GtkFileChooserAction action);
+void
+setActiveFile
+( GtkWidget *window, GFile *file );
+
+void
+gte_fileDialog_callback
+( GObject* source_object, GAsyncResult* res, gpointer data );

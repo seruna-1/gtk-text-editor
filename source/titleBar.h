@@ -1,3 +1,5 @@
-#include <gtk/gtk.h>
+PangoFontDescription *fontDescription;
 
-void buildTitleBar(GtkWidget *window);
+void
+gte_titleBar_create
+( void );

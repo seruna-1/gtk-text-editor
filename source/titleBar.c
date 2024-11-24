@@ -1,25 +1,39 @@
-#include "fileChooser.h"
-#include "save.h"
-#include <gtk/gtk.h>
+static void
+gte_openFileButton_callback
+( GtkWidget* openButton )
+{
+	gtk_file_dialog_open( fileDialog, topWindow, NULL, gte_openFileDialog_callback, NULL );
 
-static void openAction(gpointer *action, GtkWidget *window) {
-    GtkFileChooserNative *fileChooser =
-        newFileChooser(window, GTK_FILE_CHOOSER_ACTION_OPEN);
-
-    gtk_native_dialog_show(GTK_NATIVE_DIALOG(fileChooser));
+	return;
 }
 
-void buildTitleBar(GtkWidget *window) {
-    GtkWidget *headerBar = gtk_header_bar_new();
+void
+gte_titleBar_create
+( void )
+{
+	GtkWidget *headerBar = gtk_header_bar_new();
 
-    GtkWidget *saveButton = newSaveButton(window);
-    GtkWidget *saveButtonAndMenu = attachSaveMenu(window, saveButton);
+	GtkWidget *saveButton = gte_saveButton_create( topWindow );
 
-    GtkWidget *openButton = gtk_button_new_with_mnemonic("_Open");
-    g_signal_connect(openButton, "clicked", G_CALLBACK(openAction), window);
+	GtkWidget *saveButtonAndMenu = attachSaveMenu( topWindow, saveButton );
 
-    gtk_header_bar_pack_start(GTK_HEADER_BAR(headerBar), saveButtonAndMenu);
-    gtk_header_bar_pack_start(GTK_HEADER_BAR(headerBar), openButton);
+	GtkWidget *openButton = gtk_button_new_with_mnemonic( "_Open" );
 
-    gtk_window_set_titlebar(GTK_WINDOW(window), headerBar);
+	g_signal_connect( openButton, "clicked", G_CALLBACK( gte_openFileButton_callback ), NULL );
+
+	GtkFontDialog *fontDialog = gtk_font_dialog_new();
+
+	GtkWidget *fontDialogButton = gtk_font_dialog_button_new( fontDialog );
+
+	gtk_font_dialog_button_set_use_font( fontDialogButton, TRUE );
+
+	//fontDescription = gtk_font_dialog_button_get_font_desc(fontDialogButton);
+
+	gtk_header_bar_pack_start(GTK_HEADER_BAR(headerBar), saveButtonAndMenu);
+	gtk_header_bar_pack_start(GTK_HEADER_BAR(headerBar), openButton);
+	gtk_header_bar_pack_start(GTK_HEADER_BAR(headerBar), fontDialogButton);
+
+	gtk_window_set_titlebar( topWindow, headerBar);
+
+	return;
 }

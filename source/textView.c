@@ -1,7 +1,4 @@
-#include <gtk/gtk.h>
-
 GtkTextBuffer *textBuffer;
-bool EDITED = FALSE;
 
 const char *UTF_16_BE_BOM = "\xFE\xFF";
 const char *UTF_16_LE_BOM = "\xFF\xFE";
