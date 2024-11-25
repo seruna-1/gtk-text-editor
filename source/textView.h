@@ -1,7 +1,14 @@
-bool EDITED = FALSE;
+GtkWidget *gte_textview_scrolled_window, *gte_textview;
 
-void buildTextView(GtkWidget *window);
+char*
+gte_buffer_get_encoding
+( const char* data, size_t size );
 
-void textBufferToFile(GFile *file);
+void
+gte_text_buffer_reply_changing
+( GtkWidget* textBuffer, gpointer data  );
 
-void fileToTextBuffer(GFile *file);
+void
+gte_textview_create
+( void );
+

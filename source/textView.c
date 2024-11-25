@@ -1,85 +1,92 @@
-GtkTextBuffer *textBuffer;
+const char* UTF_16_BE_BOM = "\xFE\xFF";
 
-const char *UTF_16_BE_BOM = "\xFE\xFF";
-const char *UTF_16_LE_BOM = "\xFF\xFE";
-const char *UTF_32_BE_BOM = "\x00\x00\xFE\xFF";
-const char *UTF_32_LE_BOM = "\xFF\xFE\x00\x00";
+const char* UTF_16_LE_BOM = "\xFF\xFE";
 
-//  Tries to use BOM to detect encoding. If no match is found, defaults to
-//  ISO-8859-1
-char *getEncoding(const char *data, size_t size) {
-    if (size >= 4) {
-        if (memcmp(data, UTF_32_LE_BOM, 4) == 0)
-            return "UTF-32-LE";
-        if (memcmp(data, UTF_32_BE_BOM, 4) == 0)
-            return "UTF-32-BE";
-    }
-    if (size >= 2) {
-        if (memcmp(data, UTF_16_LE_BOM, 2) == 0)
-            return "UTF-16-LE";
-        if (memcmp(data, UTF_16_BE_BOM, 2) == 0)
-            return "UTF-16-BE";
-    }
-    return "ISO-8859-1";
+const char* UTF_32_BE_BOM = "\x00\x00\xFE\xFF";
+
+const char* UTF_32_LE_BOM = "\xFF\xFE\x00\x00";
+
+char*
+gte_buffer_get_encoding
+( const char* data, size_t size )
+{
+	if ( size >= 4 )
+	{
+		if ( memcmp( data, UTF_32_LE_BOM, 4 ) == 0 )
+		{
+			return "UTF-32-LE";
+		}
+
+		else if ( memcmp( data, UTF_32_BE_BOM, 4 ) == 0 )
+		{
+			return "UTF-32-BE";
+		}
+	}
+
+	else if (size >= 2)
+	{
+		if ( memcmp( data, UTF_16_LE_BOM, 2 ) == 0 )
+		{
+			return "UTF-16-LE";
+		}
+
+		else if ( memcmp( data, UTF_16_BE_BOM, 2 ) == 0 )
+		{
+			return "UTF-16-BE";
+		}
+	}
+
+	return "ISO-8859-1";
 }
 
-static void onTextChange(GtkWidget *textBuffer, GtkWidget *window) {
-    if (EDITED) {
-        return;
-    }
+void
+gte_text_buffer_reply_changing
+( GtkWidget* textBuffer, gpointer data  )
+{
+	if ( gte_unsaved == TRUE )
+	{
+		return;
+	}
 
-    EDITED = TRUE;
+	gte_unsaved = TRUE;
 
-    const char *title = gtk_window_get_title(GTK_WINDOW(window));
-    size_t titleLength = strlen(title);
+	g_free( gte_window_title_unsaved );
 
-    char newTitle[titleLength + 2];
-    sprintf(newTitle, "* %s", title);
+	GString* title_unsaved = g_string_new( "* " );
 
-    gtk_window_set_title(GTK_WINDOW(window), newTitle);
+	title_unsaved = g_string_append( title_unsaved, gte_file_path );
+
+	gte_window_title_unsaved = g_string_free_and_steal( title_unsaved ); 
+
+	gtk_window_set_title( GTK_WINDOW( gte_window_main ), gte_window_title_unsaved );
+
+	return;
 }
 
-void buildTextView(GtkWidget *window) {
-    GtkWidget *scrolledWindow = gtk_scrolled_window_new();
-    GtkWidget *textView = gtk_text_view_new();
-    textBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textView));
+void
+gte_textview_create
+( void )
+{
+	gte_textview_scrolled_window = gtk_scrolled_window_new();
 
-    gtk_text_view_set_left_margin(GTK_TEXT_VIEW(textView), 2);
-    gtk_text_view_set_right_margin(GTK_TEXT_VIEW(textView), 2);
-    gtk_text_view_set_top_margin(GTK_TEXT_VIEW(textView), 2);
-    gtk_text_view_set_bottom_margin(GTK_TEXT_VIEW(textView), 2);
+	gte_textview = gtk_text_view_new();
 
-    g_signal_connect(textBuffer, "changed", G_CALLBACK(onTextChange), window);
+	gte_text_buffer = gtk_text_view_get_buffer( GTK_TEXT_VIEW( gte_textview ) );
 
-    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrolledWindow),
-                                  textView);
+	gtk_text_view_set_left_margin( GTK_TEXT_VIEW( gte_textview ), 2 );
 
-    gtk_window_set_child(GTK_WINDOW(window), scrolledWindow);
+	gtk_text_view_set_right_margin( GTK_TEXT_VIEW( gte_textview ), 2 );
+
+	gtk_text_view_set_top_margin( GTK_TEXT_VIEW( gte_textview ), 2 );
+
+	gtk_text_view_set_bottom_margin( GTK_TEXT_VIEW( gte_textview ), 2 );
+
+	g_signal_connect( gte_text_buffer, "changed", G_CALLBACK( gte_text_buffer_reply_changing ), NULL );
+
+	gtk_scrolled_window_set_child( GTK_SCROLLED_WINDOW( gte_textview_scrolled_window ), gte_textview );
+
+	gtk_window_set_child( GTK_WINDOW( gte_window_main ), gte_textview_scrolled_window );
+
+	return;
 }
 
-void textBufferToFile(GFile *file) {
-    GtkTextIter start, end;
-    gtk_text_buffer_get_bounds(textBuffer, &start, &end);
-
-    char *text = gtk_text_buffer_get_text(textBuffer, &start, &end, true);
-
-    g_file_replace_contents(file, text, strlen(text), NULL, FALSE,
-                            G_FILE_CREATE_NONE, NULL, NULL, NULL);
-}
-
-void fileToTextBuffer(GFile *file) {
-    char *text;
-    gsize len;
-
-    g_file_load_contents(file, NULL, &text, &len, NULL, NULL);
-
-    if (!g_utf8_validate(text, len, NULL)) {
-        char *encoding = getEncoding(text, len);
-
-        text = g_convert(text, len, "UTF-8", encoding, NULL, &len, NULL);
-    }
-
-    gtk_text_buffer_set_text(textBuffer, text, len);
-
-    g_free(text);
-}

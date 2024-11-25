@@ -4,114 +4,63 @@
 
 #include <stdlib.h>
 
-GtkApplication* app;
+GtkApplication *gte_app;
 
-GtkWidget* topWindow;
+GtkWidget *gte_window_main;
 
-GFile *file;
+GFile *gte_file_gfile;
 
-char* file_path = NULL;
+char *gte_file_path;
 
-int fileType;
+gchar *gte_window_title_unsaved;
 
-int invalidTypes = G_FILE_TYPE_DIRECTORY | G_FILE_TYPE_MOUNTABLE | G_FILE_TYPE_SPECIAL;
+char *gte_window_title_fallback = "untitled";
 
-#include "closeDialog.h"
+int gte_file_invalid_types = G_FILE_TYPE_DIRECTORY | G_FILE_TYPE_MOUNTABLE | G_FILE_TYPE_SPECIAL;
 
-#include "fileDialog.h"
+GtkTextBuffer *gte_text_buffer;
+
+bool gte_unsaved;
+
+#include "gte_dialog_closing.h"
+
+#include "gte_dialog_file.h"
+
+#include "gte_file.h"
 
 #include "textView.h"
 
-#include "titleBar.h"
+#include "gte_toolbar.h"
 
-#include "save.h"
+#include "gte_app.h"
 
-#include "closeDialog.c"
+#include "gte_dialog_closing.c"
 
-#include "fileDialog.c"
+#include "gte_dialog_file.c"
+
+#include "gte_file.c"
 
 #include "textView.c"
 
-#include "titleBar.c"
+#include "gte_toolbar.c"
 
-#include "save.c"
+#include "gte_window_main.c"
 
-void
-gte_open
-( GApplication *app, GFile **files, int fileCount )
-{
-	if ( fileCount > 1 )
-	{
-		fprintf( stderr, "ERROR: Pass only one file as argument!\n" );
-
-		exit( EXIT_FAILURE );
-	}
-
-	file = g_file_dup( files[0] );
-
-	g_application_activate( app );
-
-	return;
-}
-
-static void
-gte_activate
-( GtkApplication *app )
-{
-	topWindow = gtk_application_window_new( app );
-
-	gtk_window_set_title( topWindow, "Untitled Document" );
-
-	gtk_window_set_default_size( (GtkWindow*) topWindow, 0, 0 );
-
-	GtkCssProvider *cssProvider = gtk_css_provider_new();
-
-	GdkDisplay *display = gdk_display_get_default();
-
-	gtk_css_provider_load_from_string( cssProvider, "*{font-size:16pt;} textview{font-family:monospace;}" );
-
-	gtk_style_context_add_provider_for_display( display, cssProvider, GTK_STYLE_PROVIDER_PRIORITY_USER );
-
-	buildTextView( topWindow );
-
-	gte_titleBar_create();
-
-	gte_closeDialog_create();
-
-	fileDialog = gtk_file_dialog_new();
-
-	if ( file != NULL )
-	{
-		fileType = g_file_query_file_type( file, G_FILE_QUERY_INFO_NONE, NULL );
-
-		if ( !(fileType & invalidTypes) )
-		{
-			fileToTextBuffer( file );
-
-			gte_set_file( GTK_WINDOW( topWindow ), file );
-		}
-	}
-
-	gtk_window_present( ( GtkWindow* ) topWindow );
-
-	g_signal_connect( topWindow, "close-request", G_CALLBACK( gte_closing ), NULL );
-
-	return;
-}
+#include "gte_app.c"
 
 int
 main
 ( int argc, char **argv )
 {
-	app = gtk_application_new( "com.gtk-text-editor", G_APPLICATION_HANDLES_OPEN | G_APPLICATION_NON_UNIQUE );
+	gte_app = gtk_application_new( "com.gtk-text-editor", G_APPLICATION_HANDLES_OPEN | G_APPLICATION_NON_UNIQUE );
 
-	g_signal_connect( app, "open", G_CALLBACK( gte_open ), NULL );
+	g_signal_connect( gte_app, "open", G_CALLBACK( gte_app_reply_open ), NULL );
 
-	g_signal_connect( app, "activate", G_CALLBACK( gte_activate ), NULL );
+	g_signal_connect( gte_app, "activate", G_CALLBACK( gte_app_reply_activate ), NULL );
 
-	int status = g_application_run( app, argc, argv );
+	int status = g_application_run( G_APPLICATION( gte_app ), argc, argv );
 
-	g_object_unref( app );
+	g_object_unref( gte_app );
 
 	return status;
 }
