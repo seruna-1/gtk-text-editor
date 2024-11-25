@@ -10,6 +10,8 @@ GtkWidget* topWindow;
 
 GFile *file;
 
+char* file_path = NULL;
+
 int fileType;
 
 int invalidTypes = G_FILE_TYPE_DIRECTORY | G_FILE_TYPE_MOUNTABLE | G_FILE_TYPE_SPECIAL;
@@ -86,7 +88,7 @@ gte_activate
 		{
 			fileToTextBuffer( file );
 
-			setActiveFile( topWindow, file );
+			gte_set_file( GTK_WINDOW( topWindow ), file );
 		}
 	}
 

@@ -1,14 +1,18 @@
 void
-setActiveFile
+gte_set_file
 ( GtkWidget *window, GFile *file )
 {
 	EDITED = FALSE;
 
-	gtk_window_set_title( ( GtkWindow* ) window , g_file_get_basename( file ) );
+	char* new_file_path = g_file_get_path( file );
 
-	OPEN_FILE_PATH = g_file_get_path( file );
+	free( file_path );
 
-	g_object_unref(file);
+	file_path = new_file_path;
+
+	gtk_window_set_title( GTK_WINDOW( window ) , file_path );
+
+	g_object_unref( file );
 
 	return;
 }
@@ -23,7 +27,7 @@ gte_openFileDialog_callback
 
 	fileToTextBuffer(file);
 
-	setActiveFile( topWindow, file );
+	gte_set_file( GTK_WINDOW( topWindow ), file );
 
 	return;
 }
@@ -32,13 +36,13 @@ void
 gte_saveFileDialog_callback
 ( GObject* source_object, GAsyncResult* res, gpointer data )
 {
-	GtkFileDialog* dialog = source_object;
+	GtkFileDialog* dialog = GTK_FILE_DIALOG( source_object );
 
 	GFile* file = gtk_file_dialog_save_finish( dialog, res, NULL );
 
-	textBufferToFile(file);
+	textBufferToFile( file );
 
-	setActiveFile( topWindow, file );
+	gte_set_file( GTK_WINDOW( topWindow ), file );
 
 	return;
 }

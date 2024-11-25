@@ -4,9 +4,9 @@ gte_save_callback
 {
 	char *name = "Untitled Document";
 
-	if ( OPEN_FILE_PATH[0] )
+	if (file_path[0] )
 	{
-		GFile *file = g_file_new_for_path(OPEN_FILE_PATH);
+		GFile *file = g_file_new_for_path( file_path );
 
 		name = g_file_get_basename(file);
 
@@ -26,7 +26,7 @@ gte_save_callback
 
 	gtk_file_dialog_set_title( fileDialog, name );
 
-	gtk_file_dialog_save( fileDialog, ( GtkWindow* ) topWindow, NULL, gte_saveFileDialog_callback, NULL );
+	gtk_file_dialog_save( fileDialog, GTK_WINDOW( topWindow ), NULL, gte_saveFileDialog_callback, NULL );
 
 	return;
 }

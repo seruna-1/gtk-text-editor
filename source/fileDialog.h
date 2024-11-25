@@ -1,11 +1,7 @@
-char* OPEN_FILE_PATH = "";
-
 GtkFileDialog* fileDialog;
 
-enum fileDialogMode { open, save };
-
 void
-setActiveFile
+gte_set_file
 ( GtkWidget *window, GFile *file );
 
 void
