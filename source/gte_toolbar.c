@@ -1,4 +1,22 @@
 void
+gte_button_cursor_position_set
+( int line, int column )
+{
+	if ( gte_button_cursor_position_label != NULL )
+	{
+		g_free( gte_button_cursor_position_label );
+
+		gte_button_cursor_position_label = NULL;
+	}
+
+	gte_button_cursor_position_label = g_strdup_printf( "Line: %d, Column: %d", line, column );
+
+	gtk_button_set_label( GTK_BUTTON( gte_button_cursor_position ), gte_button_cursor_position_label );
+
+	return;
+}
+
+void
 gte_button_open_reply_click
 ( GtkWidget* gte_button_open )
 {
@@ -60,6 +78,10 @@ gte_toolbar_create
 
 	g_signal_connect( gte_button_open, "clicked", G_CALLBACK( gte_button_open_reply_click ), NULL );
 
+	gte_button_cursor_position = gtk_button_new();
+
+	gte_button_cursor_position_set( 1, 1 );
+
 	//GtkFontDialog* fontDialog = gtk_font_dialog_new();
 
 	//GtkWidget* fontDialogButton = gtk_font_dialog_button_new( fontDialog );
@@ -73,6 +95,8 @@ gte_toolbar_create
 	gtk_header_bar_pack_start( GTK_HEADER_BAR( gte_toolbar ), gte_button_save_as );
 
 	gtk_header_bar_pack_start( GTK_HEADER_BAR( gte_toolbar ), gte_button_open );
+
+	gtk_header_bar_pack_end( GTK_HEADER_BAR( gte_toolbar ), gte_button_cursor_position );
 
 	//gtk_header_bar_pack_start( GTK_HEADER_BAR( headerBar ), fontDialogButton );
 

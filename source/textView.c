@@ -50,15 +50,39 @@ gte_text_buffer_reply_changing
 
 	gte_unsaved = TRUE;
 
+	if ( gte_file_gfile == NULL )
+	{
+		return;
+	}
+
 	g_free( gte_window_title_unsaved );
 
-	GString* title_unsaved = g_string_new( "* " );
+	GString *title_unsaved = g_string_new( "* " );
 
 	title_unsaved = g_string_append( title_unsaved, gte_file_path );
 
 	gte_window_title_unsaved = g_string_free_and_steal( title_unsaved ); 
 
 	gtk_window_set_title( GTK_WINDOW( gte_window_main ), gte_window_title_unsaved );
+
+	return;
+}
+
+void
+gte_text_buffer_cursor_position_changing
+( GObject *self, GParamSpec *pspec, gpointer user_data )
+{
+	GValue position = G_VALUE_INIT;
+
+	g_object_get_property( self, "cursor-position", &position );
+
+	GtkTextIter iter;
+
+	gtk_text_buffer_get_iter_at_offset( gte_text_buffer, &iter, g_value_get_int( &position ) );
+
+	int cursor_line = ( gtk_text_iter_get_line( &iter ) + 1) , cursor_column = ( gtk_text_iter_get_line_offset( &iter ) + 1 );
+
+	gte_button_cursor_position_set( cursor_line, cursor_column );
 
 	return;
 }
@@ -82,6 +106,8 @@ gte_textview_create
 	gtk_text_view_set_bottom_margin( GTK_TEXT_VIEW( gte_textview ), 2 );
 
 	g_signal_connect( gte_text_buffer, "changed", G_CALLBACK( gte_text_buffer_reply_changing ), NULL );
+
+	g_signal_connect( gte_text_buffer, "notify::cursor-position", G_CALLBACK( gte_text_buffer_cursor_position_changing ), NULL );
 
 	gtk_scrolled_window_set_child( GTK_SCROLLED_WINDOW( gte_textview_scrolled_window ), gte_textview );
 

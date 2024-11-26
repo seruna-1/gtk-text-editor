@@ -14,7 +14,7 @@ char *gte_file_path;
 
 gchar *gte_window_title_unsaved;
 
-char *gte_window_title_fallback = "untitled";
+char *gte_window_title_fallback = "* untitled";
 
 int gte_file_invalid_types = G_FILE_TYPE_DIRECTORY | G_FILE_TYPE_MOUNTABLE | G_FILE_TYPE_SPECIAL;
 
