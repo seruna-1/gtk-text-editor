@@ -1,3 +1,6 @@
 [submodule "hanabi-css"]
 	path = hanabi-css
 	url = https://codeberg.org/kalamado/hanabi-css.git
+[submodule "documentation"]
+	path = documentation
+	url = https://github.com/seruna-1/gtk-text-editor-documentation.git
