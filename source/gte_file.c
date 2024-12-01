@@ -2,120 +2,70 @@ void
 gte_file_open
 ( GFile *file )
 {
-	if ( gte_file_gfile != NULL )
+	int file_type;
+
+	char *content = "";
+
+	gsize len;
+
+	g_clear_object( &gte_file );
+
+	if ( file != NULL  )
 	{
-		g_object_unref( gte_file_gfile );
+		gte_file = g_object_ref( file );
 
-		gte_file_gfile = NULL;
-	}
+		file_type = g_file_query_file_type( file, G_FILE_QUERY_INFO_NONE, NULL );
 
-	if ( gte_file_path != NULL )
-	{
-		g_free( gte_file_path );
+		gte_generate_titles();
 
-		gte_file_path = NULL;
-	}
+		gtk_window_set_title( GTK_WINDOW( gte_window_main ), gte_window_title_saved );
 
-	if ( file == NULL )
-	{
-		gte_file_open_anonymous();
+		if ( file_type & gte_file_invalid_types )
+		{
+			printf("Error on function [gte_set_file]. Could not open file. Invalid type.\n");
+		}
 
-		return;
-	}
+		else if ( file_type != G_FILE_TYPE_UNKNOWN )
+		{
+			g_file_load_contents( file, NULL, &content, &len, NULL, NULL );
 
-	gte_file_gfile = file;
+			if ( g_utf8_validate( content, len, NULL ) == FALSE )
+			{
+				char *encoding = gte_buffer_get_encoding( content, len );
 
-	gte_file_path = g_file_get_path( gte_file_gfile );
-
-	if ( gte_file_path == NULL )
-	{
-		printf( "Error on function [gte_file_open]. [gte_file_path] is NULL, but should not be." );
-
-		return;
-	}
-
-	int file_type = g_file_query_file_type( file, G_FILE_QUERY_INFO_NONE, NULL );
-
-	if ( file_type & gte_file_invalid_types )
-	{
-		printf("Error on function [gte_set_file]. Could not open file. Invalid type.\n");
-
-		return;
-	}
-
-	if ( file_type != G_FILE_TYPE_UNKNOWN )
-	{
-		gte_file_read( file );
+				content = g_convert( content, len, "UTF-8", encoding, NULL, &len, NULL );
+			}
+		}
 	}
 
 	else
 	{
-		gtk_text_buffer_set_text( gte_text_buffer, "", 0 );
+		gtk_window_set_title( GTK_WINDOW( gte_window_main ), gte_window_title_anonymous );
 	}
 
-	gtk_window_set_title( GTK_WINDOW( gte_window_main ), gte_file_path );
+	g_signal_handler_block( gte_text_buffer, gte_textview_signal_change_handler );
+
+	gtk_text_buffer_set_text( gte_text_buffer, content, len );
+
+	g_signal_handler_unblock( gte_text_buffer, gte_textview_signal_change_handler );
 
 	gte_unsaved = FALSE;
 
-	return;
-}
-
-void
-gte_file_open_anonymous
-( void )
-{
-	gte_unsaved = FALSE;
-
-	if ( gte_file_gfile != NULL )
-	{
-		//g_object_unref( gte_file_gfile );
-
-		gte_file_gfile = NULL;
-	}
-
-	g_free( gte_file_path );
-
-	gte_file_path = NULL;
-
-	gtk_text_buffer_set_text( gte_text_buffer, "", 0 );
-
-	gtk_window_set_title( GTK_WINDOW( gte_window_main ), gte_window_title_fallback );
+	g_free( content );
 
 	return;
-}
-
-bool
-gte_file_read
-( GFile *file )
-{
-	char* text;
-
-	gsize len;
-
-	g_file_load_contents( file, NULL, &text, &len, NULL, NULL );
-
-	if ( g_utf8_validate( text, len, NULL ) == FALSE )
-	{
-		char* encoding = gte_buffer_get_encoding( text, len );
-
-		text = g_convert( text, len, "UTF-8", encoding, NULL, &len, NULL );
-	}
-
-	gtk_text_buffer_set_text( gte_text_buffer, text, len );
-
-	g_free( text );
-
-	return true;
 }
 
 
 void
 gte_file_write
-( GFile *file )
+( void )
 {
-	if ( file == NULL )
+	if ( gte_file == NULL )
 	{
-		printf( "Error on function [gte_file_write]. [gte_file_gfile] is NULL, so there is no destination to write to.\n" );
+		gtk_file_dialog_set_title( gte_dialog_file, "unamed" );
+
+		gtk_file_dialog_save( gte_dialog_file, GTK_WINDOW( gte_window_main ), NULL, gte_dialog_file_manage_saving, NULL );
 
 		return;
 	}
@@ -128,13 +78,13 @@ gte_file_write
 
 	char *text = gtk_text_buffer_get_text( gte_text_buffer, &start, &end, true );
 
-	g_file_replace_contents( file, text, strlen( text ), NULL, FALSE, G_FILE_CREATE_NONE, NULL, NULL, NULL );
+	g_file_replace_contents( gte_file, text, strlen( text ), NULL, FALSE, G_FILE_CREATE_NONE, NULL, NULL, NULL );
 
 	g_free( text );
 
 	gte_unsaved = FALSE;
 
-	gtk_window_set_title( GTK_WINDOW( gte_window_main ), gte_file_path );
+	gtk_window_set_title( GTK_WINDOW( gte_window_main ), gte_window_title_saved );
 
 	gtk_text_view_set_editable( GTK_TEXT_VIEW( gte_textview ), TRUE );
 

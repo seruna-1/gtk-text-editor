@@ -8,13 +8,7 @@ GtkApplication *gte_app;
 
 GtkWidget *gte_window_main;
 
-GFile *gte_file_gfile;
-
-char *gte_file_path;
-
-gchar *gte_window_title_unsaved;
-
-char *gte_window_title_fallback = "* untitled";
+GFile *gte_file;
 
 int gte_file_invalid_types = G_FILE_TYPE_DIRECTORY | G_FILE_TYPE_MOUNTABLE | G_FILE_TYPE_SPECIAL;
 
@@ -28,9 +22,13 @@ bool gte_unsaved;
 
 #include "gte_file.h"
 
+#include "gte_generate_titles.h"
+
 #include "textView.h"
 
 #include "gte_toolbar.h"
+
+#include "gte_window_main.h"
 
 #include "gte_app.h"
 
@@ -39,6 +37,8 @@ bool gte_unsaved;
 #include "gte_dialog_file.c"
 
 #include "gte_file.c"
+
+#include "gte_generate_titles.c"
 
 #include "textView.c"
 

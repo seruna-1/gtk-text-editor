@@ -29,9 +29,9 @@ void
 gte_button_save_reply_click
 ( GtkWidget *gte_button_save, gpointer data )
 {
-	if ( gte_file_gfile != NULL )
+	if ( gte_file != NULL )
 	{
-		gte_file_write( gte_file_gfile );
+		gte_file_write();
 	}
 
 	else
@@ -46,9 +46,9 @@ void
 gte_button_save_as_reply_click
 ( GtkWidget* gte_button_save, gpointer data )
 {
-	if ( gte_file_gfile != NULL )
+	if ( gte_file != NULL )
 	{
-		char* name = g_file_get_basename( gte_file_gfile );
+		char* name = g_file_get_basename( gte_file );
 
 		gtk_file_dialog_set_title( gte_dialog_file, name );
 	}

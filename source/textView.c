@@ -43,27 +43,12 @@ void
 gte_text_buffer_reply_changing
 ( GtkWidget* textBuffer, gpointer data  )
 {
-	if ( gte_unsaved == TRUE )
-	{
-		return;
-	}
-
 	gte_unsaved = TRUE;
 
-	if ( gte_file_gfile == NULL )
+	if ( gte_file != NULL )
 	{
-		return;
+		gtk_window_set_title( GTK_WINDOW( gte_window_main ), gte_window_title_unsaved );
 	}
-
-	g_free( gte_window_title_unsaved );
-
-	GString *title_unsaved = g_string_new( "* " );
-
-	title_unsaved = g_string_append( title_unsaved, gte_file_path );
-
-	gte_window_title_unsaved = g_string_free_and_steal( title_unsaved ); 
-
-	gtk_window_set_title( GTK_WINDOW( gte_window_main ), gte_window_title_unsaved );
 
 	return;
 }
@@ -105,7 +90,9 @@ gte_textview_create
 
 	gtk_text_view_set_bottom_margin( GTK_TEXT_VIEW( gte_textview ), 2 );
 
-	g_signal_connect( gte_text_buffer, "changed", G_CALLBACK( gte_text_buffer_reply_changing ), NULL );
+	gte_textview_signal_change_handler = g_signal_connect_data( gte_text_buffer, "changed", G_CALLBACK( gte_text_buffer_reply_changing ), NULL, NULL, G_CONNECT_DEFAULT );
+
+	//g_signal_connect( gte_text_buffer, "changed", G_CALLBACK( gte_text_buffer_reply_changing ), NULL );
 
 	g_signal_connect( gte_text_buffer, "notify::cursor-position", G_CALLBACK( gte_text_buffer_cursor_position_changing ), NULL );
 

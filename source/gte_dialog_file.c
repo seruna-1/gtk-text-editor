@@ -19,9 +19,9 @@ gte_dialog_file_manage_saving
 
 	GFile *file = gtk_file_dialog_save_finish( dialog, res, NULL );
 
-	gte_file_write( file );
-
 	gte_file_open( file );
+
+	gte_file_write();
 
 	return;
 }

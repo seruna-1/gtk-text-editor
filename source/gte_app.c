@@ -9,7 +9,7 @@ gte_app_reply_open
 		exit( EXIT_FAILURE );
 	}
 
-	gte_file_gfile = g_object_ref( files[0] );
+	gte_file = g_object_ref( files[0] );
 
 	g_application_activate( app );
 
@@ -42,7 +42,7 @@ gte_app_reply_activate
 
 	gte_dialog_file = gtk_file_dialog_new();
 
-	gte_file_open( gte_file_gfile );
+	gte_file_open( gte_file );
 
 	gtk_window_present( GTK_WINDOW( gte_window_main ) );
 
