@@ -9,7 +9,7 @@ gte_app_reply_open
 		exit( EXIT_FAILURE );
 	}
 
-	gte_file_gfile = g_file_dup( files[0] );
+	gte_file_gfile = g_object_ref( files[0] );
 
 	g_application_activate( app );
 

@@ -2,6 +2,20 @@ void
 gte_file_open
 ( GFile *file )
 {
+	if ( gte_file_gfile != NULL )
+	{
+		g_object_unref( gte_file_gfile );
+
+		gte_file_gfile = NULL;
+	}
+
+	if ( gte_file_path != NULL )
+	{
+		g_free( gte_file_path );
+
+		gte_file_path = NULL;
+	}
+
 	if ( file == NULL )
 	{
 		gte_file_open_anonymous();
@@ -9,13 +23,13 @@ gte_file_open
 		return;
 	}
 
-	g_free( gte_file_path );
+	gte_file_gfile = file;
 
-	gte_file_path = g_file_get_path( file );
+	gte_file_path = g_file_get_path( gte_file_gfile );
 
 	if ( gte_file_path == NULL )
 	{
-		printf( "Error on function [gte_set_file]. [gte_file_path] is NULL, but should not be." );
+		printf( "Error on function [gte_file_open]. [gte_file_path] is NULL, but should not be." );
 
 		return;
 	}
@@ -38,10 +52,6 @@ gte_file_open
 	{
 		gtk_text_buffer_set_text( gte_text_buffer, "", 0 );
 	}
-
-	//g_object_unref( gte_file_gfile );
-
-	gte_file_gfile = file;
 
 	gtk_window_set_title( GTK_WINDOW( gte_window_main ), gte_file_path );
 
