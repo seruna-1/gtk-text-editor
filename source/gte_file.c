@@ -103,14 +103,16 @@ void
 gte_file_write
 ( GFile *file )
 {
-	GtkTextIter start, end;
-
 	if ( file == NULL )
 	{
 		printf( "Error on function [gte_file_write]. [gte_file_gfile] is NULL, so there is no destination to write to.\n" );
 
 		return;
 	}
+
+	gtk_text_view_set_editable( GTK_TEXT_VIEW( gte_textview ), FALSE );
+
+	GtkTextIter start, end;
 
 	gtk_text_buffer_get_bounds( gte_text_buffer, &start, &end );
 
@@ -122,8 +124,9 @@ gte_file_write
 
 	gte_unsaved = FALSE;
 
-	gte_file_open( file );
+	gtk_window_set_title( GTK_WINDOW( gte_window_main ), gte_file_path );
+
+	gtk_text_view_set_editable( GTK_TEXT_VIEW( gte_textview ), TRUE );
 
 	return;
 }
-
