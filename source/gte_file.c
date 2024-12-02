@@ -4,13 +4,21 @@ gte_file_open
 {
 	int file_type;
 
-	char *content = "";
+	char *content = NULL;
 
 	gsize len;
 
-	g_clear_object( &gte_file );
+	if ( ( gte_file != NULL ) && ( gte_file != file ) )
+	{
+		g_clear_object( &gte_file );
+	}
 
-	if ( file != NULL  )
+	if ( file == NULL  )
+	{
+		gtk_window_set_title( GTK_WINDOW( gte_window_main ), gte_window_title_anonymous );
+	}
+
+	else
 	{
 		gte_file = g_object_ref( file );
 
@@ -38,20 +46,23 @@ gte_file_open
 		}
 	}
 
-	else
-	{
-		gtk_window_set_title( GTK_WINDOW( gte_window_main ), gte_window_title_anonymous );
-	}
-
 	g_signal_handler_block( gte_text_buffer, gte_textview_signal_change_handler );
 
-	gtk_text_buffer_set_text( gte_text_buffer, content, len );
+	if ( content == NULL )
+	{
+		gtk_text_buffer_set_text( gte_text_buffer, "", 0 );
+	}
+
+	else
+	{
+		gtk_text_buffer_set_text( gte_text_buffer, content, len );
+
+		g_free( content );
+	}
 
 	g_signal_handler_unblock( gte_text_buffer, gte_textview_signal_change_handler );
 
 	gte_unsaved = FALSE;
-
-	g_free( content );
 
 	return;
 }
