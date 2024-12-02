@@ -22,7 +22,9 @@ gte_app_reply_activate
 {
 	gte_window_main = gtk_application_window_new( app );
 
-	gtk_window_set_default_size( GTK_WINDOW( gte_window_main ), 0, 0 );
+	gtk_window_set_default_size( GTK_WINDOW( gte_window_main ), -1, -1 );
+
+	gtk_window_maximize( GTK_WINDOW( gte_window_main ) );
 
 	GtkCssProvider *cssProvider = gtk_css_provider_new();
 
