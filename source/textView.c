@@ -65,9 +65,15 @@ gte_text_buffer_cursor_position_changing
 
 	gtk_text_buffer_get_iter_at_offset( gte_text_buffer, &iter, g_value_get_int( &position ) );
 
-	int cursor_line = ( gtk_text_iter_get_line( &iter ) + 1) , cursor_column = ( gtk_text_iter_get_line_offset( &iter ) + 1 );
+	int line = gtk_text_iter_get_line( &iter );
 
-	gte_button_cursor_position_set( cursor_line, cursor_column );
+	int column = gtk_text_iter_get_line_offset( &iter );
+
+	g_free( gte_cursor_label );
+
+	gte_cursor_label = g_strdup_printf( "Line: %d, Column: %d", line + 1, column + 1 );
+
+	gtk_menu_button_set_label( GTK_MENU_BUTTON( gte_cursor_menu_button ), gte_cursor_label );
 
 	return;
 }
@@ -91,8 +97,6 @@ gte_textview_create
 	gtk_text_view_set_bottom_margin( GTK_TEXT_VIEW( gte_textview ), 2 );
 
 	gte_textview_signal_change_handler = g_signal_connect_data( gte_text_buffer, "changed", G_CALLBACK( gte_text_buffer_reply_changing ), NULL, NULL, G_CONNECT_DEFAULT );
-
-	//g_signal_connect( gte_text_buffer, "changed", G_CALLBACK( gte_text_buffer_reply_changing ), NULL );
 
 	g_signal_connect( gte_text_buffer, "notify::cursor-position", G_CALLBACK( gte_text_buffer_cursor_position_changing ), NULL );
 

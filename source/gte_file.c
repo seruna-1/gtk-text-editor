@@ -2,7 +2,7 @@ void
 gte_file_open
 ( GFile *file )
 {
-	int file_type;
+	int file_type;printf("opened \n");
 
 	char *content = NULL;
 

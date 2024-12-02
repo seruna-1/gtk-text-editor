@@ -26,6 +26,8 @@ bool gte_unsaved;
 
 #include "textView.h"
 
+#include "gte_cursor.h"
+
 #include "gte_toolbar.h"
 
 #include "gte_window_main.h"
@@ -41,6 +43,8 @@ bool gte_unsaved;
 #include "gte_generate_titles.c"
 
 #include "textView.c"
+
+#include "gte_cursor.c"
 
 #include "gte_toolbar.c"
 
