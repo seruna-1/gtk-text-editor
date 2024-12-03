@@ -1,3 +1,7 @@
+GtkTextBuffer *gte_text_buffer;
+
+bool gte_unsaved;
+
 GtkWidget *gte_textview_scrolled_window, *gte_textview;
 
 gulong gte_textview_signal_change_handler;
