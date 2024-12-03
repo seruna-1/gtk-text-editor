@@ -15,3 +15,15 @@ gte_window_main_reply_closing
 	return TRUE;
 }
 
+void
+gte_window_main_create
+( void )
+{
+	gte_window_main = gtk_application_window_new( gte_app );
+
+	gtk_window_set_default_size( GTK_WINDOW( gte_window_main ), -1, -1 );
+
+	gtk_window_maximize( GTK_WINDOW( gte_window_main ) );
+
+	return;
+}

@@ -46,7 +46,7 @@ gte_file_open
 		}
 	}
 
-	g_signal_handler_block( gte_text_buffer, gte_textview_signal_change_handler );
+	g_signal_handler_block( gte_text_buffer, gte_text_view_signal_change_handler );
 
 	if ( content == NULL )
 	{
@@ -60,7 +60,7 @@ gte_file_open
 		g_free( content );
 	}
 
-	g_signal_handler_unblock( gte_text_buffer, gte_textview_signal_change_handler );
+	g_signal_handler_unblock( gte_text_buffer, gte_text_view_signal_change_handler );
 
 	gte_unsaved = FALSE;
 
@@ -81,7 +81,7 @@ gte_file_write
 		return;
 	}
 
-	gtk_text_view_set_editable( GTK_TEXT_VIEW( gte_textview ), FALSE );
+	gtk_text_view_set_editable( GTK_TEXT_VIEW( gte_text_view ), FALSE );
 
 	GtkTextIter start, end;
 
@@ -97,7 +97,7 @@ gte_file_write
 
 	gtk_window_set_title( GTK_WINDOW( gte_window_main ), gte_window_title_saved );
 
-	gtk_text_view_set_editable( GTK_TEXT_VIEW( gte_textview ), TRUE );
+	gtk_text_view_set_editable( GTK_TEXT_VIEW( gte_text_view ), TRUE );
 
 	return;
 }

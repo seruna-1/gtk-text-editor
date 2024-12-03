@@ -4,18 +4,6 @@
 
 #include <stdlib.h>
 
-GtkApplication *gte_app;
-
-GtkWidget *gte_window_main;
-
-GFile *gte_file;
-
-int gte_file_invalid_types = G_FILE_TYPE_DIRECTORY | G_FILE_TYPE_MOUNTABLE | G_FILE_TYPE_SPECIAL;
-
-GtkTextBuffer *gte_text_buffer;
-
-bool gte_unsaved;
-
 #include "gte_dialog_closing.h"
 
 #include "gte_dialog_file.h"
@@ -24,7 +12,7 @@ bool gte_unsaved;
 
 #include "gte_generate_titles.h"
 
-#include "textView.h"
+#include "gte_text.h"
 
 #include "gte_cursor.h"
 
@@ -42,7 +30,7 @@ bool gte_unsaved;
 
 #include "gte_generate_titles.c"
 
-#include "textView.c"
+#include "gte_text.c"
 
 #include "gte_cursor.c"
 

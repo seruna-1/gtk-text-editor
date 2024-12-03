@@ -62,14 +62,6 @@ gte_toolbar_create
 
 	gte_cursor_menu_button_create();
 
-	//GtkFontDialog* fontDialog = gtk_font_dialog_new();
-
-	//GtkWidget* fontDialogButton = gtk_font_dialog_button_new( fontDialog );
-
-	//gtk_font_dialog_button_set_use_font( GTK_FONT_DIALOG_BUTTON( fontDialogButton ), TRUE );
-
-	//fontDescription = gtk_font_dialog_button_get_font_desc(fontDialogButton);
-
 	gtk_header_bar_pack_start( GTK_HEADER_BAR( gte_toolbar ), gte_button_save );
 
 	gtk_header_bar_pack_start( GTK_HEADER_BAR( gte_toolbar ), gte_button_save_as );
@@ -77,8 +69,6 @@ gte_toolbar_create
 	gtk_header_bar_pack_start( GTK_HEADER_BAR( gte_toolbar ), gte_button_open );
 
 	gtk_header_bar_pack_end( GTK_HEADER_BAR( gte_toolbar ), gte_cursor_menu_button );
-
-	//gtk_header_bar_pack_start( GTK_HEADER_BAR( headerBar ), fontDialogButton );
 
 	gtk_window_set_titlebar( GTK_WINDOW( gte_window_main ), gte_toolbar );
 

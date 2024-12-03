@@ -1,3 +1,7 @@
+GFile *gte_file;
+
+int gte_file_invalid_types = G_FILE_TYPE_DIRECTORY | G_FILE_TYPE_MOUNTABLE | G_FILE_TYPE_SPECIAL;
+
 void
 gte_file_open
 ( GFile *file );
@@ -5,4 +9,3 @@ gte_file_open
 void
 gte_file_write
 ( void );
-

@@ -54,7 +54,7 @@ gte_text_buffer_reply_changing
 }
 
 void
-gte_text_buffer_cursor_position_changing
+gte_text_buffer_reply_cursor_position_change
 ( GObject *self, GParamSpec *pspec, gpointer user_data )
 {
 	GValue position = G_VALUE_INIT;
@@ -79,30 +79,30 @@ gte_text_buffer_cursor_position_changing
 }
 
 void
-gte_textview_create
+gte_text_view_create
 ( void )
 {
-	gte_textview_scrolled_window = gtk_scrolled_window_new();
+	gte_text_view_scrolled_window = gtk_scrolled_window_new();
 
-	gte_textview = gtk_text_view_new();
+	gte_text_view = gtk_text_view_new();
 
-	gte_text_buffer = gtk_text_view_get_buffer( GTK_TEXT_VIEW( gte_textview ) );
+	gte_text_buffer = gtk_text_view_get_buffer( GTK_TEXT_VIEW( gte_text_view ) );
 
-	gtk_text_view_set_left_margin( GTK_TEXT_VIEW( gte_textview ), 2 );
+	gtk_text_view_set_left_margin( GTK_TEXT_VIEW( gte_text_view ), 2 );
 
-	gtk_text_view_set_right_margin( GTK_TEXT_VIEW( gte_textview ), 2 );
+	gtk_text_view_set_right_margin( GTK_TEXT_VIEW( gte_text_view ), 2 );
 
-	gtk_text_view_set_top_margin( GTK_TEXT_VIEW( gte_textview ), 2 );
+	gtk_text_view_set_top_margin( GTK_TEXT_VIEW( gte_text_view ), 2 );
 
-	gtk_text_view_set_bottom_margin( GTK_TEXT_VIEW( gte_textview ), 2 );
+	gtk_text_view_set_bottom_margin( GTK_TEXT_VIEW( gte_text_view ), 2 );
 
-	gte_textview_signal_change_handler = g_signal_connect_data( gte_text_buffer, "changed", G_CALLBACK( gte_text_buffer_reply_changing ), NULL, NULL, G_CONNECT_DEFAULT );
+	gte_text_view_signal_change_handler = g_signal_connect_data( gte_text_buffer, "changed", G_CALLBACK( gte_text_buffer_reply_changing ), NULL, NULL, G_CONNECT_DEFAULT );
 
-	g_signal_connect( gte_text_buffer, "notify::cursor-position", G_CALLBACK( gte_text_buffer_cursor_position_changing ), NULL );
+	g_signal_connect( gte_text_buffer, "notify::cursor-position", G_CALLBACK( gte_text_buffer_reply_cursor_position_change ), NULL );
 
-	gtk_scrolled_window_set_child( GTK_SCROLLED_WINDOW( gte_textview_scrolled_window ), gte_textview );
+	gtk_scrolled_window_set_child( GTK_SCROLLED_WINDOW( gte_text_view_scrolled_window ), gte_text_view );
 
-	gtk_window_set_child( GTK_WINDOW( gte_window_main ), gte_textview_scrolled_window );
+	gtk_window_set_child( GTK_WINDOW( gte_window_main ), gte_text_view_scrolled_window );
 
 	return;
 }

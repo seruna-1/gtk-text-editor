@@ -20,23 +20,9 @@ void
 gte_app_reply_activate
 ( GtkApplication *app )
 {
-	gte_window_main = gtk_application_window_new( app );
+	gte_window_main_create();
 
-	gtk_window_set_default_size( GTK_WINDOW( gte_window_main ), -1, -1 );
-
-	gtk_window_maximize( GTK_WINDOW( gte_window_main ) );
-
-	GtkCssProvider *cssProvider = gtk_css_provider_new();
-
-	GdkDisplay* display = gdk_display_get_default();
-
-	gtk_css_provider_load_from_string( cssProvider, "*{font-size:16pt;} textview{font-family:monospace;}" );
-
-	gtk_style_context_add_provider_for_display( display, GTK_STYLE_PROVIDER( cssProvider ), GTK_STYLE_PROVIDER_PRIORITY_USER );
-
-	gte_text_buffer = gtk_text_buffer_new( NULL );
-
-	gte_textview_create();
+	gte_text_view_create();
 
 	gte_toolbar_create();
 

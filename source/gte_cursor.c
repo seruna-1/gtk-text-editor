@@ -2,7 +2,7 @@ void
 gte_cursor_set_position
 ( int line, int column )
 {
-	g_signal_handler_block( gte_text_buffer, gte_textview_signal_change_handler );
+	g_signal_handler_block( gte_text_buffer, gte_text_view_signal_change_handler );
 
 	GtkTextIter iter;
 
@@ -10,9 +10,13 @@ gte_cursor_set_position
 
 	gtk_text_buffer_place_cursor( GTK_TEXT_BUFFER( gte_text_buffer ), &iter );
 
-	g_signal_handler_unblock( gte_text_buffer, gte_textview_signal_change_handler );
+	g_signal_handler_unblock( gte_text_buffer, gte_text_view_signal_change_handler );
 
-	gtk_widget_grab_focus( gte_textview );
+	gtk_widget_grab_focus( gte_text_view );
+
+	gtk_text_view_scroll_to_iter( GTK_TEXT_VIEW( gte_text_view ), &iter, 0.0, FALSE, 0.5, 0.5 );
+
+	gtk_text_view_reset_cursor_blink( GTK_TEXT_VIEW( gte_text_view ) );
 
 	return;
 }
@@ -34,18 +38,6 @@ gte_cursor_popover_button_go_reply_click
 	int column = atoi ( buffer_column );
 
 	gte_cursor_set_position( line, column );
-
-	gtk_text_view_reset_cursor_blink( GTK_TEXT_VIEW( gte_textview ) );
-
-	/*
-	g_free( line );
-
-	g_free( column );
-
-	g_object_unref( entry_buffer_line );
-
-	g_object_unref( entry_buffer_column );
-	*/
 
 	return;
 }
