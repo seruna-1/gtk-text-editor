@@ -2,7 +2,7 @@ void
 gte_file_open
 ( GFile *file )
 {
-	int file_type;printf("opened \n");
+	int file_type;
 
 	char *content = NULL;
 
@@ -63,6 +63,8 @@ gte_file_open
 	g_signal_handler_unblock( gte_text_buffer, gte_text_view_signal_change_handler );
 
 	gte_unsaved = FALSE;
+
+	gte_cursor_set_position( 0, 0);
 
 	return;
 }

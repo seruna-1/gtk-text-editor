@@ -75,6 +75,8 @@ gte_text_buffer_reply_cursor_position_change
 
 	gtk_menu_button_set_label( GTK_MENU_BUTTON( gte_cursor_menu_button ), gte_cursor_label );
 
+	gtk_text_view_scroll_to_iter( GTK_TEXT_VIEW( gte_text_view ), &iter, 0.0, TRUE, 0.5, 0.5 );
+
 	return;
 }
 
