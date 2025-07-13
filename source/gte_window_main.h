@@ -1,10 +1,12 @@
 #include <gtk/gtk.h>
 
-extern const gchar *gte_window_title_anonymous;
+void
+gte_window_create_title_options
+( GFile *gte_file_opened );
 
 void
-gte_window_generate_title_options
-( void );
+gte_window_update_title
+( GFile *gte_file_opened, bool gte_unsaved );
 
 gboolean
 gte_window_main_reply_closing

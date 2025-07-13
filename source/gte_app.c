@@ -41,7 +41,7 @@ gte_app_reply_activate
 ( GtkApplication *app )
 {
 	gte_window_main_create( app );
-/*
+
 	gte_text_view_create( gte_window_main );
 
 	gte_toolbar_create( gte_window_main );
@@ -51,7 +51,7 @@ gte_app_reply_activate
 	gte_dialog_file_create();
 
 	gte_file_open( gte_app_file_to_open );
-*/
+
 	gtk_window_present( GTK_WINDOW( gte_window_main ) );
 
 	g_signal_connect( gte_window_main, "close-request", G_CALLBACK( gte_window_main_reply_closing ), NULL );

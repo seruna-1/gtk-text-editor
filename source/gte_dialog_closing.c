@@ -6,7 +6,7 @@ GtkAlertDialog *gte_dialog_closing;
 
 extern gchar *gte_window_title_unsaved;
 
-char** gte_dialog_closing_button_labels = { "Close without saving", "Go back", NULL };
+const char* const gte_dialog_closing_button_labels[] = { "Close without saving", "Go back", NULL };
 
 void
 gte_dialog_closing_create

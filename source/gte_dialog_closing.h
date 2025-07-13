@@ -1,6 +1,6 @@
 #include <gtk/gtk.h>
 
-extern char** gte_dialog_closing_button_labels;
+extern const char* const gte_dialog_closing_button_labels[];
 
 void
 gte_dialog_closing_create

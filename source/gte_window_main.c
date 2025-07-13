@@ -4,23 +4,23 @@
 
 extern GFile *gte_file_opened;
 
-extern bool gte_unsaved;
-
 #include "gte_app.h"
 
 #include "gte_dialog_closing.h"
 
 extern GtkAlertDialog *gte_dialog_closing;
 
+extern bool gte_unsaved;
+
 GtkWidget *gte_window_main;
 
 gchar *gte_window_title_saved, *gte_window_title_unsaved;
 
-const gchar *gte_window_title_anonymous = "* untitled";
+gchar *gte_window_title_anonymous = "* untitled";
 
 void
-gte_window_generate_title_options
-( void )
+gte_window_create_title_options
+( GFile *gte_file_opened )
 {
 	g_free( gte_window_title_saved );
 
@@ -37,11 +37,35 @@ gte_window_generate_title_options
 	return;
 }
 
+void
+gte_window_update_title
+( GFile *gte_file_opened, bool gte_unsaved )
+{
+	gchar *title;
+
+	if ( gte_file_opened == NULL )
+	{
+		title = gte_window_title_anonymous;
+	}
+	else if ( gte_unsaved == true )
+	{
+		title = gte_window_title_unsaved;
+	}
+	else
+	{
+		title = gte_window_title_saved;
+	}
+
+	gtk_window_set_title( GTK_WINDOW( gte_window_main ), title );
+
+	return;
+}
+
 gboolean
 gte_window_main_reply_closing
 ( GtkWidget* window_main, gpointer data )
 {
-	if ( gte_unsaved == TRUE )
+	if ( gte_unsaved == true )
 	{
 		gtk_alert_dialog_choose( gte_dialog_closing, GTK_WINDOW( window_main ), NULL, gte_dialog_closing_manage, NULL );
 	}
