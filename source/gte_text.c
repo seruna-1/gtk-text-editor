@@ -83,7 +83,7 @@ gte_text_buffer_reply_changing
 
 void
 gte_text_buffer_reply_cursor_position_change
-( GObject *self, GParamSpec *pspec, gpointer user_data, gchar *gte_cursor_label )
+( GObject *self, GParamSpec *pspec, gpointer user_data )
 {
 	GValue position = G_VALUE_INIT;
 
