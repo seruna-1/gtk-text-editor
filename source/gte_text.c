@@ -6,8 +6,6 @@
 
 #include "gte_cursor.h"
 
-extern gchar *gte_cursor_label;
-
 extern GtkWidget *gte_cursor_menu_button;
 
 extern GtkWidget *gte_window_main;
@@ -85,6 +83,8 @@ void
 gte_text_buffer_reply_cursor_position_change
 ( GObject *self, GParamSpec *pspec, gpointer user_data )
 {
+	GString *gte_cursor_label = user_data;
+
 	GValue position = G_VALUE_INIT;
 
 	g_object_get_property( self, "cursor-position", &position );
@@ -97,11 +97,9 @@ gte_text_buffer_reply_cursor_position_change
 
 	int column = gtk_text_iter_get_line_offset( &iter );
 
-	g_free( gte_cursor_label );
+	g_string_printf( gte_cursor_label, "Line: %d, Column: %d", line + 1, column + 1 );
 
-	gte_cursor_label = g_strdup_printf( "Line: %d, Column: %d", line + 1, column + 1 );
-
-	gtk_menu_button_set_label( GTK_MENU_BUTTON( gte_cursor_menu_button ), gte_cursor_label );
+	gtk_menu_button_set_label( GTK_MENU_BUTTON( gte_cursor_menu_button ), gte_cursor_label->str );
 
 	return;
 }
@@ -162,11 +160,13 @@ gte_text_view_create
 		G_CONNECT_DEFAULT
 	);
 
+	GString *gte_cursor_label = g_string_sized_new(40);
+
 	g_signal_connect(
 		gte_text_buffer,
 		"notify::cursor-position",
 		G_CALLBACK( gte_text_buffer_reply_cursor_position_change ),
-		NULL
+		gte_cursor_label
 	);
 
 	gte_text_view_key_event_controller = gtk_event_controller_key_new();
