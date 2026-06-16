@@ -11,7 +11,7 @@ SRC_FILES := $(addprefix $(SRCDIR)/, $(SRCS))
 PKG := $(shell pkg-config --cflags --libs gtk4)
 
 all:
-	$(CC) $(SRC_FILES) $(OUTPUT) $(PKG) 
+	clang $(SRC_FILES) $(OUTPUT) $(PKG) 
 
 warn:
 	$(CC) $(SRC_FILES) $(OUTPUT) $(PKG) $(FLAGS)
