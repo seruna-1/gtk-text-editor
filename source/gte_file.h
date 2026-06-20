@@ -1,4 +1,5 @@
 #include <gtk/gtk.h>
+#include <limits.h>
 
 #define gte_file_invalid_types (G_FILE_TYPE_DIRECTORY | G_FILE_TYPE_MOUNTABLE | G_FILE_TYPE_SPECIAL)
 

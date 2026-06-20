@@ -50,11 +50,17 @@ gte_file_open
 		{
 			g_file_load_contents( file_to_open, NULL, &content, &len, NULL, NULL );
 
-			if ( g_utf8_validate( content, len, NULL ) == FALSE )
+			if (len > (gsize)LONG_MAX || len < (gsize)LONG_MIN)
+			{
+				fprintf(stderr, "Failed to convert len from unsigned long to long\n");
+				exit(-1);
+			}
+
+			if ( g_utf8_validate( content, (long)len, NULL ) == FALSE )
 			{
 				char *encoding = gte_buffer_get_encoding( content, len );
 
-				content = g_convert( content, len, "UTF-8", encoding, NULL, &len, NULL );
+				content = g_convert( content, (long)len, "UTF-8", encoding, NULL, &len, NULL );
 			}
 		}
 	}
@@ -65,7 +71,13 @@ gte_file_open
 
 	g_signal_handler_block( gte_text_buffer, gte_text_view_signal_change_handler );
 
-	gtk_text_buffer_set_text( gte_text_buffer, content, len );
+	if (len > (gsize)INT_MAX || len < (gsize)INT_MIN)
+	{
+		fprintf(stderr, "Failed to convert gte_text_buffer from gsize to int\n");
+		fprintf(stderr, "The variable is either too large or too small\n");
+		exit(-1);
+	}
+	gtk_text_buffer_set_text( gte_text_buffer, content, (int)len );
 
 	g_free( content );
 
